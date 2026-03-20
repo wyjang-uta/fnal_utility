@@ -1,0 +1,34 @@
+#!/bin/sh
+
+# Version table
+ROOT_VERSION=6.28.12;   ROOT_HASH="/hljl7gy" # root@6.28.12%gcc@12.2.0 arch=linux-almalinux9-x86_64_v2
+GEANT_VERSION=10.6.1;   GEANT_HASH="/r2dcnvb"
+CMAKE_VERSION=3.27.7
+IFDHC_VERSION=2.6.20;   IFDHC_HASH="/lrli3f5"
+GCC_VERSION=12.2.0
+FIFEUTILS_VERSION=3.7.4
+
+# Start loading packages
+echo "Running on Alma Linux 9"
+#. /cvmfs/larsoft.opensciencegrid.org/spack-packages/setup-env.sh # This is not work for xrootd protocol access!
+. /cvmfs/larsoft.opensciencegrid.org/spack-v0.22.0-fermi/setup-env.sh
+# check spack.readthedocs.io/en/latest/basic_usage.html for the detailed usage.
+run_command "Setting root $ROOT_VERSION via spack" spack load $ROOT_HASH
+#run_command "Setting up grid access authorization (submit mode)" get_bearer_token icarus;export BEARER_TOKEN_FILE=/run/user/`id -u`/bt_u`id -u`
+run_command "Setting ifdhc via spack" spack load $IFDHC_HASH
+run_command "Setting expat via spack" spack load /cvjfrla
+run_command "Setting geant4 via spack" spack load /r2dcnvb
+run_command "Sourcing geant4.sh ..." source $(spack location -i /r2dcnvb)/bin/geant4.sh
+export Geant4_DIR=$(spack location -i $GEANT4_HASH)/lib64/Geant4-$GEANT4_VERSION
+export G4DIR=$Geant4_DIR
+export CMAKE_PREFIX_PATH=$(spack location -i $GEANT4_HASH):$(spack location -i $EXPAT_HASH):$CMAKE_PREFIX_PATH
+#setup-g4
+set_prompt
+
+# deprecated or non-used packages
+#run_command "Setting geant4 $GEANT_VERSION via spack" spack load geant4@$GEANT_VERSION
+#run_command "Setting geant4 data $GEANT_VERSION via spack" spack load geant4-data@$GEANT_VERSION
+#run_command "Setting cmake $CMAKE_VERSION via spack" spack load cmake@$CMAKE_VERSION
+#run_command "Setting gcc $GCC_VERSION via spack" spack load gcc@$GCC_VERSION
+#run_command "Setting fife-utils $FIFEUTILS_VERSION via spack" spack load fife-utils@$FIFEUTILS_VERSION
+#run_command "Setting samweb" set_samweb icarus
